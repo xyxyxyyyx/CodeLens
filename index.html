@@ -1,0 +1,13 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>CodeLens — Code Explainer</title><style>
+body{font-family:system-ui,sans-serif;background:#101827;color:#f4f7ff;margin:0;padding:36px}main{max-width:850px;margin:auto}h1{font-size:2.4rem}p{color:#bbc7da}.panel{background:#1d2b40;border:1px solid #36475e;border-radius:16px;padding:22px;margin:18px 0}textarea,select{box-sizing:border-box;width:100%;background:#0d1727;color:white;border:1px solid #5a6b81;border-radius:9px;padding:12px;font:inherit}textarea{min-height:200px;font-family:monospace}label{display:block;margin:14px 0 8px}button{background:#83e3c3;color:#10261e;border:0;border-radius:9px;padding:12px 22px;font-weight:bold;cursor:pointer;margin-top:16px}pre{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.6}small{color:#b6c2d5}</style></head><body><main><h1>🔎 CodeLens</h1><p>Make unfamiliar code less intimidating. A lightweight code explainer prototype.</p><section class="panel"><label for="lang">Programming language</label><select id="lang"><option>Python</option><option>Java</option><option>C++</option><option>JavaScript</option></select><label for="code">Paste code</label><textarea id="code" placeholder="Paste your code here..."></textarea><button id="explain">Explain code</button></section><section class="panel" aria-live="polite"><h2>Explanation</h2><pre id="result">Your explanation will appear here.</pre></section><small>Powered by Gemma 4 via Google Cloud Vertex AI. Never paste private credentials into code.</small></main><script>
+const code=document.getElementById('code'),result=document.getElementById('result'),lang=document.getElementById('lang');document.getElementById('explain').addEventListener('click', async () => {
+  if (!code.value.trim()) { result.textContent = 'Please paste some code first.'; return; }
+  result.textContent = 'Asking Gemma 4...';
+  try {
+    const response = await fetch('/api/explain', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({code:code.value,language:lang.value}) });
+    const data = await response.json();
+    result.textContent = response.ok ? data.explanation : `Error: ${data.error}`;
+  } catch (err) { result.textContent = `Connection error: ${err.message}. Run the Python server first.`; }
+});
+</script></body></html>
